@@ -67,9 +67,9 @@ LABELS = {
 DEVICE = "BOMBA-RECALQUE-01"
 CASE_CSV = Path("data/caso_bomba_hotel.csv")
 PHOTO = Path("assets/motor_trifasico.jpg")
-DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_MX-claude-high.onnx"
+DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_ES-davefx-medium.onnx"
 VOICE_URL = ("https://huggingface.co/rhasspy/piper-voices/resolve/main/"
-             "es/es_MX/ald/medium/es_MX-ald-medium.onnx")
+             "es/es_ES/davefx/medium/es_ES-davefx-medium.onnx")
 VOICE_JSON_URL = VOICE_URL + ".json"
 EDGE_VOICE = "es-CU-ManuelNeural"  # masculino, Cuba (requiere edge-tts no bloqueado)
 
@@ -134,19 +134,20 @@ def load_series(path: Path) -> dict:
 def narration() -> list[dict]:
     return [
         {"key": "intro", "reveal": (0.0, 0.0), "frames": 1,
-         "text": "Hola, soy Ronny Díaz López. En este caso te muestro un "
-                 "diagnóstico de causa raíz hecho de forma totalmente remota, "
-                 "sobre datos anonimizados para proteger al cliente."},
+         "text": "Hola, soy Ronny Díaz López, ingeniero cubano. En este caso te "
+                 "muestro un diagnóstico de causa raíz hecho de forma totalmente "
+                 "remota, sobre datos anonimizados para proteger al cliente."},
         {"key": "contexto", "reveal": (0.0, 0.0), "frames": 1,
-         "text": "Un hotel en Brasil reportó que la bomba de presurización de "
-                 "agua se disparaba de forma intermitente, sin una causa aparente."},
+         "text": "El hotel Residencial Veredas Plaza, en Goiânia, Brasil, reportó "
+                 "que la bomba de presurización de agua se disparaba de forma "
+                 "intermitente, sin una causa aparente."},
         {"key": "remoto", "reveal": (0.0, 0.0), "frames": 1,
          "text": "En lugar de viajar a la instalación, el cliente me compartió "
                  "la telemetría del motor de manera remota."},
         {"key": "ficha", "reveal": (0.0, 0.0), "frames": 1,
-         "text": "Es un motor trifásico de inducción, de quince kilovatios, "
-                 "trescientos ochenta voltios a sesenta hercios, acoplado a una "
-                 "bomba centrífuga de presurización."},
+         "text": "Es un motor trifásico de inducción de siete coma cinco caballos "
+                 "de fuerza, trescientos ochenta voltios a sesenta hercios, "
+                 "acoplado a una bomba centrífuga de presurización."},
         {"key": "metodo", "reveal": (0.0, 0.15), "frames": 6,
          "text": "Cargué los datos en mi herramienta y fijé los umbrales del "
                  "fabricante: un nivel de aviso y uno crítico para temperatura, "
@@ -246,7 +247,7 @@ def _run_piper(segments, model: Path, workdir: Path, piper: str):
             _silence_wav(wav, float(seg.get("silence", 5.0)))
         else:
             proc = subprocess.run(
-                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.25", "--length-scale", "1.02", "--noise-w-scale", "0.2"],
+                [piper, "-m", str(model), "-f", str(wav)],
                 input=seg["text"], text=True, capture_output=True,
             )
             if proc.returncode != 0 or not wav.exists():
@@ -336,13 +337,13 @@ def build_figure(series: dict):
              "de agua · Residencial Veredas Plaza · Goiânia, Goiás, Brasil",
              color=DIM, fontsize=9.5, ha="left", va="center")
     fig.text(0.065, 0.858,
-             "Motor de inducción trifásico WEG W22 IR3 Premium (jaula de ardilla) · 7,5 HP (5,5 kW) · "
-             "380 V · 60 Hz · 4 polos · ~1745 rpm · montaje B3 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200",
+             "Motor de inducción trifásico WEG W22 IR3 Premium (jaula de ardilla) · "
+             "7,5 HP (5,5 kW) · 380 V · 60 Hz · 4 polos · ~1745 rpm · montaje B3",
              color=DIM, fontsize=9, ha="left", va="center")
     fig.text(0.065, 0.062, "Evidencia reproducible:  python rca.py --input data/caso_bomba_hotel.csv",
              color=DIM, fontsize=8.5, ha="left", va="center")
     fig.text(0.065, 0.028,
-             "Foto: ThreePhaseMotor.jpg · dominio público (Wikimedia Commons, LorenzoMignanelli) · datos ficticios anonimizados",
+             "Foto: VEM_motor_Zwickau.png · CC BY-SA 4.0 (VEM motors GmbH, Wikimedia Commons) · datos ficticios anonimizados",
              color=DIM, fontsize=7.5, ha="left", va="center")
 
     lines, warn_sc, crit_sc = {}, {}, {}
@@ -440,9 +441,11 @@ def _panel_blocks(key: str, cause: str) -> list[dict]:
         return [
             {"t": "Ficha del equipo", "y": 0.52, "s": 12, "c": CYAN, "w": "bold"},
             {"t": "Motor de inducción trifásico", "y": 0.45, "s": 11},
-            {"t": "15 kW (20 CV) · 380 V · 60 Hz", "y": 0.38, "s": 11},
-            {"t": "4 polos · ~1745 rpm · montaje B3 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200", "y": 0.31, "s": 11},
-            {"t": "Acoplado a bomba centrífuga", "y": 0.24, "s": 11},
+            {"t": "7,5 HP (5,5 kW) · 380 V · 60 Hz", "y": 0.385, "s": 11},
+            {"t": "4 polos · ~1745 rpm · montaje B3", "y": 0.32, "s": 11},
+            {"t": "TFVE/IC411 · IP55 · S1 · Clase F", "y": 0.255, "s": 11},
+            {"t": "Hierro fundido FC-200", "y": 0.19, "s": 11},
+            {"t": "Acoplado a bomba centrífuga", "y": 0.125, "s": 11},
         ]
     if key == "metodo":
         return [
@@ -609,7 +612,7 @@ def main() -> int:
     parser.add_argument("--silent", action="store_true", help="sin voz en off")
     parser.add_argument("--voice", type=Path, default=DEFAULT_VOICE,
                         help="modelo Piper de respaldo (masculino)")
-    parser.add_argument("--tts", choices=["auto", "edge", "piper"], default="piper",
+    parser.add_argument("--tts", choices=["auto", "edge", "piper"], default="auto",
                         help="motor de voz: edge (cubana), piper (offline) o auto")
     parser.add_argument("--edge-voice", default=EDGE_VOICE)
     args = parser.parse_args()
