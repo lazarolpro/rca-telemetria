@@ -329,13 +329,13 @@ def build_figure(series: dict):
              fontsize=20, fontweight="bold", ha="left", va="center")
     fig.text(0.975, 0.948, "Ronny Díaz López", color=TXT, fontsize=12.5,
              ha="right", va="center", fontweight="bold")
-    fig.text(0.975, 0.900, "ingeniería eléctrica de aplicación", color=DIM,
+    fig.text(0.975, 0.885, "ingeniería eléctrica de aplicación", color=DIM,
              fontsize=9.5, ha="right", va="center")
-    fig.text(0.065, 0.890,
+    fig.text(0.065, 0.880,
              "Telemetría en vivo · BOMBA-RECALQUE-01 · motobomba de presurización "
-             "de agua · Residencial Veredas Plaza · Goiânia, Goiás, Brasil · WEG W22 IR3 Premium 7,5 HP (5,5 kW) · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200",
+             "de agua · Residencial Veredas Plaza · Goiânia, Goiás, Brasil",
              color=DIM, fontsize=9.5, ha="left", va="center")
-    fig.text(0.065, 0.876,
+    fig.text(0.065, 0.858,
              "Motor de inducción trifásico WEG W22 IR3 Premium (jaula de ardilla) · 7,5 HP (5,5 kW) · "
              "380 V · 60 Hz · 4 polos · ~1745 rpm · montaje B3 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200",
              color=DIM, fontsize=9, ha="left", va="center")
