@@ -67,7 +67,7 @@ LABELS = {
 DEVICE = "BOMBA-RECALQUE-01"
 CASE_CSV = Path("data/caso_bomba_hotel.csv")
 PHOTO = Path("assets/motor_trifasico.jpg")
-DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_MX-ald-medium.onnx"
+DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_MX-claude-high.onnx"
 VOICE_URL = ("https://huggingface.co/rhasspy/piper-voices/resolve/main/"
              "es/es_MX/ald/medium/es_MX-ald-medium.onnx")
 VOICE_JSON_URL = VOICE_URL + ".json"
@@ -246,7 +246,7 @@ def _run_piper(segments, model: Path, workdir: Path, piper: str):
             _silence_wav(wav, float(seg.get("silence", 5.0)))
         else:
             proc = subprocess.run(
-                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.4", "--length-scale", "0.95", "--noise-w-scale", "0.4"],
+                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.3", "--length-scale", "1.0", "--noise-w-scale", "0.3"],
                 input=seg["text"], text=True, capture_output=True,
             )
             if proc.returncode != 0 or not wav.exists():
