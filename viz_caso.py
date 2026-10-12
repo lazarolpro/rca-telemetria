@@ -66,7 +66,7 @@ LABELS = {
 
 DEVICE = "BOMBA-RECALQUE-01"
 CASE_CSV = Path("data/caso_bomba_hotel.csv")
-PHOTO = Path("assets/motor_trifasico.jpg")
+PHOTO = Path("assets/VEM_motor_Zwickau.png")
 DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_ES-davefx-medium.onnx"
 VOICE_URL = ("https://huggingface.co/rhasspy/piper-voices/resolve/main/"
              "es/es_ES/davefx/medium/es_ES-davefx-medium.onnx")
@@ -634,6 +634,12 @@ def main() -> int:
     encode_video(timeline, args.fps, silent)
     if narration_wav is not None:
         mux_audio(silent, narration_wav, narrated)
+        audio_mp3 = args.outdir / "narracion_caso.mp3"
+        subprocess.run(
+            ["ffmpeg", "-y", "-v", "error", "-i", str(narration_wav),
+             "-codec:a", "libmp3lame", "-b:a", "192k", str(audio_mp3)],
+            check=True)
+        print(f"[ok] {audio_mp3}")
     else:
         shutil.copyfile(silent, narrated)
         print(f"[ok] {narrated} (sin audio)")
