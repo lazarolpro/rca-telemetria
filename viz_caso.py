@@ -246,7 +246,7 @@ def _run_piper(segments, model: Path, workdir: Path, piper: str):
             _silence_wav(wav, float(seg.get("silence", 5.0)))
         else:
             proc = subprocess.run(
-                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.3", "--length-scale", "1.0", "--noise-w-scale", "0.3"],
+                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.25", "--length-scale", "1.02", "--noise-w-scale", "0.2"],
                 input=seg["text"], text=True, capture_output=True,
             )
             if proc.returncode != 0 or not wav.exists():
@@ -609,7 +609,7 @@ def main() -> int:
     parser.add_argument("--silent", action="store_true", help="sin voz en off")
     parser.add_argument("--voice", type=Path, default=DEFAULT_VOICE,
                         help="modelo Piper de respaldo (masculino)")
-    parser.add_argument("--tts", choices=["auto", "edge", "piper"], default="auto",
+    parser.add_argument("--tts", choices=["auto", "edge", "piper"], default="piper",
                         help="motor de voz: edge (cubana), piper (offline) o auto")
     parser.add_argument("--edge-voice", default=EDGE_VOICE)
     args = parser.parse_args()
