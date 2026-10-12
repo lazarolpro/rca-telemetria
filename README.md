@@ -20,7 +20,29 @@ accionable y reproducible.
 - Clasifica la causa probable y prioriza el equipo más afectado.
 - Emite un informe Markdown con línea de tiempo y acciones recomendadas.
 
-## Demo visual
+## Videocaso narrado — caso real anonimizado (hotel)
+
+![Videocaso: diagnóstico remoto de causa raíz](assets/rca_demo_caso.gif)
+
+Recorrido **narrado** de un caso real anonimizado: la motobomba de presurización
+de agua de un hotel —cliente sin identificar, datos ficticios— empieza a derivar
+en vibración, corriente y temperatura hasta disparar. La herramienta correlaciona
+las tres señales y entrega la causa raíz, todo de forma remota.
+
+Video con voz en off: [`assets/rca_demo_caso.mp4`](assets/rca_demo_caso.mp4).
+Locución: **Ronny Díaz López** · voz neuronal en español.
+
+Regenerar (opcional; requiere `matplotlib`, `ffmpeg` y `piper-tts`):
+
+```bash
+python viz_caso.py --input data/caso_bomba_hotel.csv
+```
+
+> El modelo de voz se descarga al primer uso. La foto del motor es
+> `ThreePhaseMotor.jpg`, **dominio público** (Wikimedia Commons, LorenzoMignanelli),
+> usada como imagen ilustrativa del tipo de equipo; ninguna marca comercial aparece.
+
+## Demo visual (telemetría genérica)
 
 ![Demostración del diagnóstico de causa raíz](assets/rca_demo.gif)
 
@@ -49,8 +71,10 @@ python -m pytest -q                         # pruebas
 ## Evidencia que produce
 
 - `data/telemetry_sample.csv` — datos deterministas (semilla fija).
-- `report.md` — informe con causa raíz probable y acciones.
+- `data/caso_bomba_hotel.csv` — telemetría del caso del hotel (ficticia, semilla fija).
+- `report.md`, `report_caso.md` — informes con causa raíz probable y acciones.
 - `assets/rca_demo.mp4`, `rca_demo.gif`, `rca_poster.png` — demo visual animado.
+- `assets/rca_demo_caso.mp4` (narrado), `rca_demo_caso.gif`, `rca_demo_caso_poster.png` — videocaso.
 - `pytest` en verde.
 
 ## Stack
