@@ -246,7 +246,7 @@ def _run_piper(segments, model: Path, workdir: Path, piper: str):
             _silence_wav(wav, float(seg.get("silence", 5.0)))
         else:
             proc = subprocess.run(
-                [piper, "-m", str(model), "-f", str(wav)],
+                [piper, "-m", str(model), "-f", str(wav), "--noise-scale", "0.4", "--length-scale", "0.95", "--noise-w-scale", "0.4"],
                 input=seg["text"], text=True, capture_output=True,
             )
             if proc.returncode != 0 or not wav.exists():
