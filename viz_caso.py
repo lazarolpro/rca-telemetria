@@ -332,12 +332,12 @@ def build_figure(series: dict):
     fig.text(0.975, 0.918, "ingeniería eléctrica de aplicación", color=DIM,
              fontsize=9.5, ha="right", va="center")
     fig.text(0.065, 0.905,
-             "Telemetría en vivo · Motor BOMBA-RECALQUE-01 · bomba de presurización "
-             "de agua · hotel (Brasil, anonimizado)",
+             "Telemetría en vivo · BOMBA-RECALQUE-01 · motobomba de presurización "
+             "de agua · Residencial Veredas Plaza · Goiânia, Goiás, Brasil · WEG W22 IR3 Premium 7,5 HP (5,5 kW) · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200",
              color=DIM, fontsize=9.5, ha="left", va="center")
     fig.text(0.065, 0.876,
-             "Motor de inducción trifásico (jaula de ardilla) · 15 kW (20 CV) · "
-             "380 V · 60 Hz · 4 polos · ~1770 rpm · montaje B3",
+             "Motor de inducción trifásico WEG W22 IR3 Premium (jaula de ardilla) · 7,5 HP (5,5 kW) · "
+             "380 V · 60 Hz · 4 polos · ~1745 rpm · montaje B3 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200",
              color=DIM, fontsize=9, ha="left", va="center")
     fig.text(0.065, 0.062, "Evidencia reproducible:  python rca.py --input data/caso_bomba_hotel.csv",
              color=DIM, fontsize=8.5, ha="left", va="center")
@@ -441,7 +441,7 @@ def _panel_blocks(key: str, cause: str) -> list[dict]:
             {"t": "Ficha del equipo", "y": 0.52, "s": 12, "c": CYAN, "w": "bold"},
             {"t": "Motor de inducción trifásico", "y": 0.45, "s": 11},
             {"t": "15 kW (20 CV) · 380 V · 60 Hz", "y": 0.38, "s": 11},
-            {"t": "4 polos · ~1770 rpm · montaje B3", "y": 0.31, "s": 11},
+            {"t": "4 polos · ~1745 rpm · montaje B3 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200 · TFVE/IC411 · IP55 · S1 · Clase F · hierro fundido FC-200", "y": 0.31, "s": 11},
             {"t": "Acoplado a bomba centrífuga", "y": 0.24, "s": 11},
         ]
     if key == "metodo":
