@@ -33,7 +33,7 @@ hotel **Residencial Veredas Plaza** (nombre ficticio; datos anonimizados) deriva
 vibración, corriente y temperatura hasta disparar. La herramienta correlaciona las
 tres señales y entrega la causa raíz, todo de forma remota.
 
-- Video con voz en off: [`assets/rca_demo_caso.mp4`](assets/rca_demo_caso.mp4)
+- Video con voz en off: [`rca_demo_caso.mp4`]([assets/rca_demo_caso.mp4](https://youtu.be/EAS67L_7BPw))
 - Locución: **Ing. Ronny Díaz López** (voz masculina en español).
 
 > La foto del motor es `VEM_motor_Zwickau.png` (ilustrativa), **CC BY-SA 4.0**
@@ -45,7 +45,7 @@ tres señales y entrega la causa raíz, todo de forma remota.
 
 La animación recorre la telemetría, marca las anomalías contra los umbrales del
 fabricante y cierra con la causa raíz probable. Video completo:
-[`assets/rca_demo.mp4`](assets/rca_demo.mp4).
+[`rca_demo.mp4`](https://youtu.be/EAS67L_7BPw).
 
 ## Evidencia que produce
 
