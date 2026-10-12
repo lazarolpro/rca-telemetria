@@ -30,10 +30,12 @@ from pathlib import Path
 
 # Umbrales de alarma por magnitud. En un banco real vendrian de la hoja de datos
 # del fabricante; aqui son valores didacticos y centralizados a proposito.
+# Motor de referencia: WEG W22 IR3 Premium 7,5 cv (5,5 kW), 380 V, 4 polos,
+# 60 Hz -> corriente a plena carga (FLA) ~= 11 A.
 THRESHOLDS = {
     "temperature_c": {"warn": 75.0, "crit": 90.0, "unit": "C"},
     "vibration_mm_s": {"warn": 4.5, "crit": 7.1, "unit": "mm/s"},
-    "current_a": {"warn": 22.0, "crit": 28.0, "unit": "A"},
+    "current_a": {"warn": 10.0, "crit": 12.0, "unit": "A"},
 }
 
 # Mapa de codigos de error -> causa probable. Ampliable por el equipo de soporte.
@@ -182,7 +184,7 @@ def make_sample(path: Path, seed: int = 42) -> None:
         wear = (i - 48) / 48 if (i > 48 and dev == "MOTOR-01") else 0
         temp = 55 + 30 * max(wear, 0) + rng.uniform(-2, 2)
         vib = 2.0 + 6.5 * max(wear, 0) + rng.uniform(-0.3, 0.3)
-        cur = 14 + 16 * max(wear, 0) + rng.uniform(-0.5, 0.5)
+        cur = 8.0 + 4.6 * max(wear, 0) + rng.uniform(-0.3, 0.3)
         code = "0"
         if dev == "MOTOR-01" and i > 80:
             code = "E02"

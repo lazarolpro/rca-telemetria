@@ -104,7 +104,7 @@ def make_case_data(path: Path, seed: int = 7) -> None:
         wear = (i - 48) / 48 if i > 48 else 0
         temp = 55 + 32 * max(wear, 0) + rng.uniform(-1.5, 1.5)
         vib = 2.0 + 6.8 * max(wear, 0) + rng.uniform(-0.25, 0.25)
-        cur = 14 + 15.5 * max(wear, 0) + rng.uniform(-0.4, 0.4)
+        cur = 8.0 + 4.6 * max(wear, 0) + rng.uniform(-0.3, 0.3)
         code = "E02" if i > 80 else "0"
         rows.append({
             "timestamp": ts, "device": DEVICE,
