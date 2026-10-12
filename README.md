@@ -39,8 +39,9 @@ python viz_caso.py --input data/caso_bomba_hotel.csv
 ```
 
 > El modelo de voz se descarga al primer uso. La foto del motor es
-> `ThreePhaseMotor.jpg`, **dominio público** (Wikimedia Commons, LorenzoMignanelli),
-> usada como imagen ilustrativa del tipo de equipo; ninguna marca comercial aparece.
+> `VEM_motor_Zwickau.png` (ilustrativa), **CC BY-SA 4.0** (VEM motors GmbH, Wikimedia Commons),
+> usada como imagen ilustrativa de un motor trifásico industrial TEFC (hierro fundido, patas B3), acorde al caso
+> de presurización de un hotel en Goiânia, Goiás, Brasil. No se menciona marca comercial en el video narrado.
 
 ## Demo visual (telemetría genérica)
 

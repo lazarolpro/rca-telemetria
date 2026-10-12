@@ -67,10 +67,11 @@ LABELS = {
 DEVICE = "BOMBA-RECALQUE-01"
 CASE_CSV = Path("data/caso_bomba_hotel.csv")
 PHOTO = Path("assets/motor_trifasico.jpg")
-DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_MX-claude-high.onnx"
+DEFAULT_VOICE = Path.home() / ".cache" / "piper" / "es_MX-ald-medium.onnx"
 VOICE_URL = ("https://huggingface.co/rhasspy/piper-voices/resolve/main/"
-             "es/es_MX/claude/high/es_MX-claude-high.onnx")
+             "es/es_MX/ald/medium/es_MX-ald-medium.onnx")
 VOICE_JSON_URL = VOICE_URL + ".json"
+EDGE_VOICE = "es-CU-ManuelNeural"  # masculino, Cuba (requiere edge-tts no bloqueado)
 
 PAUSE = 0.35  # segundos de silencio entre bloques de narración
 
@@ -150,7 +151,9 @@ def narration() -> list[dict]:
          "text": "Cargué los datos en mi herramienta y fijé los umbrales del "
                  "fabricante: un nivel de aviso y uno crítico para temperatura, "
                  "vibración y corriente."},
-        {"key": "deriva", "reveal": (0.15, 0.78), "frames": 16,
+        {"key": "herramientas", "reveal": (0.15, 0.32), "frames": 6,
+         "silence": 4.5, "text": ""},
+        {"key": "deriva", "reveal": (0.32, 0.78), "frames": 16,
          "text": "Durante las primeras horas, todo estuvo dentro de rango. Pero "
                  "la vibración empezó a subir de forma sostenida; y con ella, la "
                  "corriente y la temperatura."},
@@ -191,44 +194,119 @@ def _piper_bin() -> str | None:
     return str(local) if local.exists() else None
 
 
-def synthesize(segments: list[dict], model: Path, workdir: Path,
-               silent: bool) -> tuple[list[float], Path | None]:
-    """Devuelve la duración de cada bloque y, si hay voz, el WAV concatenado."""
-    workdir.mkdir(parents=True, exist_ok=True)
-    piper = _piper_bin()
-    if silent or piper is None:
-        durations = []
-        for seg in segments:
-            durations.append(seg["frames"] * 1.1 if seg["frames"] > 1 else 6.0)
-        return durations, None
+def _edge_tts_bin() -> str | None:
+    found = shutil.which("edge-tts")
+    if found:
+        return found
+    local = Path.home() / ".local" / "bin" / "edge-tts"
+    return str(local) if local.exists() else None
 
-    model = ensure_voice(model)
-    parts: list[Path] = []
-    durations: list[float] = []
-    for i, seg in enumerate(segments):
-        wav = workdir / f"seg{i:02d}.wav"
-        proc = subprocess.run(
-            [piper, "-m", str(model), "-f", str(wav)],
-            input=seg["text"], text=True, capture_output=True,
-        )
-        if proc.returncode != 0 or not wav.exists():
-            raise RuntimeError(f"piper falló en el bloque {seg['key']}: {proc.stderr}")
-        with wave.open(str(wav)) as w:
-            durations.append(w.getnframes() / w.getframerate())
-        parts.append(wav)
 
+def _silence_wav(path: Path, seconds: float, rate: int = 22050) -> None:
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(rate)
+        w.writeframes(b"\x00" * int(rate * 2 * seconds))
+
+
+def _fallback_durations(segments: list[dict]) -> list[float]:
+    out = []
+    for seg in segments:
+        if seg.get("silence"):
+            out.append(float(seg["silence"]))
+        elif seg["frames"] > 1:
+            out.append(seg["frames"] * 1.1)
+        else:
+            out.append(6.0)
+    return out
+
+
+def _concat(parts: list[Path], workdir: Path) -> Path:
     narration_wav = workdir / "narracion.wav"
     with wave.open(str(parts[0])) as first:
         params = first.getparams()
-    silence = b"\x00" * (int(params.sampwidth * params.nchannels * params.framerate * PAUSE))
+    gap = b"\x00" * int(params.sampwidth * params.nchannels * params.framerate * PAUSE)
     with wave.open(str(narration_wav), "wb") as out:
         out.setparams(params)
         for i, wav in enumerate(parts):
             with wave.open(str(wav)) as w:
                 out.writeframes(w.readframes(w.getnframes()))
             if i < len(parts) - 1:
-                out.writeframes(silence)
-    return durations, narration_wav
+                out.writeframes(gap)
+    return narration_wav
+
+
+def _run_piper(segments, model: Path, workdir: Path, piper: str):
+    model = ensure_voice(model)
+    parts, durations = [], []
+    for i, seg in enumerate(segments):
+        wav = workdir / f"seg{i:02d}.wav"
+        if not seg["text"].strip():
+            _silence_wav(wav, float(seg.get("silence", 5.0)))
+        else:
+            proc = subprocess.run(
+                [piper, "-m", str(model), "-f", str(wav)],
+                input=seg["text"], text=True, capture_output=True,
+            )
+            if proc.returncode != 0 or not wav.exists():
+                raise RuntimeError(f"piper falló en {seg['key']}: {proc.stderr}")
+        with wave.open(str(wav)) as w:
+            durations.append(w.getnframes() / w.getframerate())
+        parts.append(wav)
+    return durations, _concat(parts, workdir)
+
+
+def _run_edge(segments, workdir: Path, voice: str, edge: str):
+    parts, durations = [], []
+    for i, seg in enumerate(segments):
+        wav = workdir / f"seg{i:02d}.wav"
+        if not seg["text"].strip():
+            _silence_wav(wav, float(seg.get("silence", 5.0)))
+        else:
+            mp3 = workdir / f"seg{i:02d}.mp3"
+            proc = subprocess.run(
+                [edge, "--voice", voice, "--text", seg["text"],
+                 "--write-media", str(mp3)],
+                text=True, capture_output=True,
+            )
+            if proc.returncode != 0 or not mp3.exists() or mp3.stat().st_size == 0:
+                raise RuntimeError(f"edge-tts falló en {seg['key']}")
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(mp3), "-ar", "22050", "-ac", "1", str(wav)],
+                check=True, capture_output=True,
+            )
+        with wave.open(str(wav)) as w:
+            durations.append(w.getnframes() / w.getframerate())
+        parts.append(wav)
+    return durations, _concat(parts, workdir)
+
+
+def synthesize(segments: list[dict], model: Path, workdir: Path, silent: bool,
+               engine: str = "auto", edge_voice: str = EDGE_VOICE):
+    """Devuelve la duración de cada bloque y, si hay voz, el WAV concatenado.
+
+    engine: "auto" prueba edge-tts (voz cubana) y cae a piper; "edge"/"piper"
+    fuerzan un motor; silencioso no narra.
+    """
+    workdir.mkdir(parents=True, exist_ok=True)
+    if silent:
+        return _fallback_durations(segments), None
+
+    edge = _edge_tts_bin()
+    if engine in ("auto", "edge") and edge is not None:
+        try:
+            return _run_edge(segments, workdir, edge_voice, edge)
+        except Exception as exc:  # noqa: BLE001
+            if engine == "edge":
+                raise
+            print(f"[..] edge-tts no disponible ({exc}); uso Piper")
+
+    piper = _piper_bin()
+    if piper is None:
+        print("[..] sin motor de voz; genero el video sin narración")
+        return _fallback_durations(segments), None
+    return _run_piper(segments, model, workdir, piper)
 
 
 # --------------------------------------------------------------------------- #
@@ -238,7 +316,7 @@ def build_figure(series: dict):
     fig = plt.figure(figsize=(12.8, 7.2), dpi=100, facecolor=BG)
     gs = fig.add_gridspec(
         3, 2, width_ratios=[1.75, 1.0],
-        left=0.065, right=0.975, top=0.80, bottom=0.095,
+        left=0.065, right=0.975, top=0.80, bottom=0.15,
         hspace=0.42, wspace=0.10,
     )
     axes = [fig.add_subplot(gs[i, 0]) for i in range(3)]
@@ -249,16 +327,21 @@ def build_figure(series: dict):
     times = series["times"]
     fig.text(0.065, 0.955, "Diagnóstico remoto de causa raíz", color=TXT,
              fontsize=20, fontweight="bold", ha="left", va="center")
-    fig.text(0.065, 0.912,
-             "Caso anonimizado · bomba de presurización de agua · cliente hotelero (Brasil)",
-             color=DIM, fontsize=10.5, ha="left", va="center")
     fig.text(0.975, 0.955, "Ronny Díaz López", color=TXT, fontsize=12.5,
              ha="right", va="center", fontweight="bold")
     fig.text(0.975, 0.918, "ingeniería eléctrica de aplicación", color=DIM,
              fontsize=9.5, ha="right", va="center")
-    fig.text(0.065, 0.045, "Evidencia reproducible:  python rca.py --input data/caso_bomba_hotel.csv",
+    fig.text(0.065, 0.905,
+             "Telemetría en vivo · Motor BOMBA-RECALQUE-01 · bomba de presurización "
+             "de agua · hotel (Brasil, anonimizado)",
+             color=DIM, fontsize=9.5, ha="left", va="center")
+    fig.text(0.065, 0.876,
+             "Motor de inducción trifásico (jaula de ardilla) · 15 kW (20 CV) · "
+             "380 V · 60 Hz · 4 polos · ~1770 rpm · montaje B3",
+             color=DIM, fontsize=9, ha="left", va="center")
+    fig.text(0.065, 0.062, "Evidencia reproducible:  python rca.py --input data/caso_bomba_hotel.csv",
              color=DIM, fontsize=8.5, ha="left", va="center")
-    fig.text(0.065, 0.015,
+    fig.text(0.065, 0.028,
              "Foto: ThreePhaseMotor.jpg · dominio público (Wikimedia Commons, LorenzoMignanelli) · datos ficticios anonimizados",
              color=DIM, fontsize=7.5, ha="left", va="center")
 
@@ -368,6 +451,18 @@ def _panel_blocks(key: str, cause: str) -> list[dict]:
              "y": 0.45, "s": 11},
             {"t": "Temperatura · Vibración · Corriente", "y": 0.36,
              "s": 10.5, "c": DIM},
+        ]
+    if key == "herramientas":
+        return [
+            {"t": "Herramientas y software", "y": 0.52, "s": 12, "c": ACCENT,
+             "w": "bold"},
+            {"t": "• Python · análisis de datos y telemetría", "y": 0.45, "s": 10.5},
+            {"t": "• Normas técnicas (ISO 10816) y hojas de datos del fabricante",
+             "y": 0.37, "s": 10.5},
+            {"t": "• Umbrales configurables · reporte automático (Markdown / JSON)",
+             "y": 0.29, "s": 10.5},
+            {"t": "Sin exponer la implementación interna.", "y": 0.20, "s": 9,
+             "c": DIM},
         ]
     if key == "deriva":
         return [
@@ -512,7 +607,11 @@ def main() -> int:
     parser.add_argument("--outdir", type=Path, default=Path("assets"))
     parser.add_argument("--fps", type=int, default=24)
     parser.add_argument("--silent", action="store_true", help="sin voz en off")
-    parser.add_argument("--voice", type=Path, default=DEFAULT_VOICE)
+    parser.add_argument("--voice", type=Path, default=DEFAULT_VOICE,
+                        help="modelo Piper de respaldo (masculino)")
+    parser.add_argument("--tts", choices=["auto", "edge", "piper"], default="auto",
+                        help="motor de voz: edge (cubana), piper (offline) o auto")
+    parser.add_argument("--edge-voice", default=EDGE_VOICE)
     args = parser.parse_args()
 
     series = load_series(args.input)
@@ -520,7 +619,8 @@ def main() -> int:
     print(f"[..] {series['n']} registros · causa raíz: {cause}")
 
     segments = narration()
-    durations, narration_wav = synthesize(segments, args.voice, Path("build"), args.silent)
+    durations, narration_wav = synthesize(segments, args.voice, Path("build"),
+                                          args.silent, args.tts, args.edge_voice)
     print(f"[..] narración: {sum(durations):.1f} s en {len(segments)} bloques")
 
     fig, artist = build_figure(series)
