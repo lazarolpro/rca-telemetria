@@ -1,10 +1,14 @@
 # Capa 1 — Diagnóstico y soporte técnico (causa raíz)
 
-[![CI](https://github.com/lazarolpro/rca-telemetria/actions/workflows/ci.yml/badge.svg)](https://github.com/lazarolpro/rca-telemetria/actions/workflows/ci.yml)
 [`lazarolpro/rca-telemetria`](https://github.com/lazarolpro/rca-telemetria) · parte del [portafolio de 6 capacidades](https://github.com/lazarolpro/portafolio)
 
 **Capacidad demostrada:** diagnosticar fallas por causa raíz sobre telemetría
 real de un equipo, en lugar de tratar síntomas.
+
+> © 2026 Ronny L. Díaz López. **Todos los derechos reservados.** El código fuente,
+> los datos de detalle y los informes completos son propiedad del autor y no se
+> publican. Prohibida su venta o uso comercial sin autorización escrita. Ver
+> [`LICENSE`](LICENSE).
 
 ## Problema real
 
@@ -45,16 +49,22 @@ fabricante y cierra con la causa raíz probable. Video completo:
 
 ## Evidencia que produce
 
-- `data/telemetry_sample.csv` — datos deterministas (semilla fija).
-- `data/caso_bomba_hotel.csv` — telemetría del caso del hotel (ficticia, semilla fija).
-- `report.md`, `report_caso.md` — informes con causa raíz probable y acciones.
+- [`assets/muestra_informe_rca.pdf`](assets/muestra_informe_rca.pdf) — muestra resumida
+  del informe final (con marca de agua). El informe completo no se publica.
 - `assets/rca_demo.mp4`, `rca_demo.gif`, `rca_poster.png` — demo visual animado.
 - `assets/rca_demo_caso.mp4` (narrado), `rca_demo_caso.gif`, `rca_demo_caso_poster.png` — videocaso.
-- `pytest` en verde.
+
+## Alcance de este repositorio
+
+Este repositorio es una **vitrina del resultado**: muestra el video narrado del caso,
+la animación del diagnóstico y una muestra del informe. El **código fuente** (análisis
+RCA, generación de datos y render del video) y los **informes completos** son propiedad
+del autor y se mantienen fuera del repositorio público.
 
 ## Stack
 
-Python 3 (solo biblioteca estándar). Sin dependencias externas.
+Python 3 (solo biblioteca estándar para el motor de análisis) y `matplotlib` + `ffmpeg`
+para la capa visual. *(El código no se publica; ver `LICENSE`.)*
 
 ## Por qué le importa a la empresa
 

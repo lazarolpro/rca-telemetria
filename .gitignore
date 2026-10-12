@@ -9,3 +9,14 @@ assets/narracion_caso.mp3
 assets/informe_caso_rca.pdf
 GUIA_TELEMETRIA.md
 caso_residencial_veredas_plaza.md
+
+# Codigo fuente y CI: propiedad del autor, no se publican en GitHub
+rca.py
+viz.py
+viz_caso.py
+make_pdf.py
+make_muestra_pdf.py
+report.md
+report_caso.md
+tests/
+.github/
