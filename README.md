@@ -33,7 +33,7 @@ hotel **Residencial Veredas Plaza** (nombre ficticio; datos anonimizados) deriva
 vibración, corriente y temperatura hasta disparar. La herramienta correlaciona las
 tres señales y entrega la causa raíz, todo de forma remota.
 
-- ![](https://github.com/lazarolpro/rca-telemetria/blob/main/assets/thumbnail-a30f0805-cdd6-434a-a85f-c50c1efdb7f9.png)
+![](https://github.com/lazarolpro/rca-telemetria/blob/main/assets/thumbnail-a30f0805-cdd6-434a-a85f-c50c1efdb7f9.png)
 - Video con voz en off: [`rca_demo_caso.mp4`](https://youtu.be/EAS67L_7BPw)
 - Locución: **Ing. Ronny Díaz López** (voz masculina en español).
 
@@ -46,6 +46,7 @@ tres señales y entrega la causa raíz, todo de forma remota.
 
 La animación recorre la telemetría, marca las anomalías contra los umbrales del
 fabricante y cierra con la causa raíz probable. Video completo:
+![](https://github.com/lazarolpro/rca-telemetria/blob/main/assets/thumbnail-a30f0805-cdd6-434a-a85f-c50c1efdb7f9.png)
 [`rca_demo.mp4`](https://youtu.be/EAS67L_7BPw).
 
 ## Evidencia que produce
