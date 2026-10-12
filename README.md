@@ -30,17 +30,12 @@ vibración, corriente y temperatura hasta disparar. La herramienta correlaciona 
 tres señales y entrega la causa raíz, todo de forma remota.
 
 - Video con voz en off: [`assets/rca_demo_caso.mp4`](assets/rca_demo_caso.mp4)
-- Audio suelto (reutilizable): [`assets/narracion_caso.mp3`](assets/narracion_caso.mp3)
-- Informe del caso en PDF: [`assets/informe_caso_rca.pdf`](assets/informe_caso_rca.pdf)
-- Guía de telemetría real y herramientas: [`GUIA_TELEMETRIA.md`](GUIA_TELEMETRIA.md)
-- Documento fuente: [`caso_residencial_veredas_plaza.md`](caso_residencial_veredas_plaza.md)
 - Locución: **Ronny Díaz López** (voz masculina en español).
 
 Regenerar (opcional; requiere `matplotlib`, `ffmpeg` y `piper-tts`):
 
 ```bash
 python viz_caso.py --input data/caso_bomba_hotel.csv   # video + gif + póster
-python make_pdf.py                                     # informe PDF
 ```
 
 > La voz preferida es `es-CU-ManuelNeural` vía `edge-tts` (masculina, Cuba); si el
@@ -82,7 +77,6 @@ python -m pytest -q                         # pruebas
 - `report.md`, `report_caso.md` — informes con causa raíz probable y acciones.
 - `assets/rca_demo.mp4`, `rca_demo.gif`, `rca_poster.png` — demo visual animado.
 - `assets/rca_demo_caso.mp4` (narrado), `rca_demo_caso.gif`, `rca_demo_caso_poster.png` — videocaso.
-- `assets/informe_caso_rca.pdf` — informe del caso (RCA, motor y plan de acción).
 - `pytest` en verde.
 
 ## Stack

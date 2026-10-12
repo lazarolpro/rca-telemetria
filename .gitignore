@@ -3,3 +3,9 @@ __pycache__/
 .pytest_cache/
 .venv/
 build/
+
+# Uso local (no se publican en GitHub)
+assets/narracion_caso.mp3
+assets/informe_caso_rca.pdf
+GUIA_TELEMETRIA.md
+caso_residencial_veredas_plaza.md
