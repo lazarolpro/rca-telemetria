@@ -32,6 +32,7 @@ tres señales y entrega la causa raíz, todo de forma remota.
 - Video con voz en off: [`assets/rca_demo_caso.mp4`](assets/rca_demo_caso.mp4)
 - Audio suelto (reutilizable): [`assets/narracion_caso.mp3`](assets/narracion_caso.mp3)
 - Informe del caso en PDF: [`assets/informe_caso_rca.pdf`](assets/informe_caso_rca.pdf)
+- Guía de telemetría real y herramientas: [`GUIA_TELEMETRIA.md`](GUIA_TELEMETRIA.md)
 - Documento fuente: [`caso_residencial_veredas_plaza.md`](caso_residencial_veredas_plaza.md)
 - Locución: **Ronny Díaz López** (voz masculina en español).
 
