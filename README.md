@@ -1,6 +1,6 @@
 # Capa 1 — Diagnóstico y soporte técnico (causa raíz)
 
-[`lazarolpro/rca-telemetria`](https://github.com/lazarolpro/rca-telemetria) · parte del [portafolio de 6 capacidades](https://github.com/lazarolpro/portafolio)
+[`lazarolpro/rca-telemetria`](https://github.com/lazarolpro/rca-telemetria) · parte del [portafolio de 9 capacidades](https://github.com/lazarolpro/portafolio)
 
 **Capacidad demostrada:** diagnosticar fallas por causa raíz sobre telemetría
 real de un equipo, en lugar de tratar síntomas.
@@ -72,3 +72,6 @@ para la capa visual. *(El código no se publica; ver `LICENSE`.)*
 
 Responde a la necesidad de **resolver errores por la causa raíz** y no por el
 síntoma: cada diagnóstico deja un informe auditable y repetible.
+
+**En mantenimiento:** es el método para no cambiar piezas a ciegas — se diagnostica
+la causa antes de intervenir.
